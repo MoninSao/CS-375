@@ -14,9 +14,11 @@ function getRandomIntegerInRange(min, max) {
 
 app.get("/random", (req, res) => {
   console.log("Received query string:", req.query);
-  let randomNumber = getRandomIntegerInRange(1, 10);
+  const min = parseInt(req.query.min);
+  const max = parseInt(req.query.max);
+  let randomNumber = getRandomIntegerInRange(min, max);
   console.log("Selected random number", randomNumber);
-  res.json({ number: 77 });
+  res.json({ number: randomNumber });
 });
 
 app.listen(port, hostname, () => {

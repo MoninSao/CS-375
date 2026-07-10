@@ -24,15 +24,30 @@
 <script>
 let minInput = document.getElementById("min");
 let maxInput = document.getElementById("max");
-console.log("Max input entered:", maxInput.value);
+let button = document.getElementById("send");
+let container = document.getElementById("container");
 
-fetch("/random?key=value").then((response) => {
-  return response.json();
-}).then((data) => {
-  console.log("Received body:", data);
-}).catch(error => {
-  console.log(error);
-})
+button.addEventListener("click", () => {
+  const min = minInput.value;
+  const max = maxInput.value;
+  
+  fetch(`/random?min=${min}&max=${max}`).then((response) => {
+    return response.json();
+  }).then((data) => {
+    console.log("Received body:", data);
+    const number = data.number;
+    const numberElement = document.createElement("div");
+    numberElement.textContent = number;
+    
+    if (number > 15) {
+      numberElement.style.color = "blue";
+    }
+    
+    container.appendChild(numberElement);
+  }).catch(error => {
+    console.log(error);
+  });
+});
 </script>
 
 </body>
