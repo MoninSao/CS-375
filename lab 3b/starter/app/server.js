@@ -50,4 +50,18 @@ app.listen(port, hostname, () => {
 /*
 TEXT ANSWERS GO HERE
 
+Client-side validation can't really be trusted. There's a bunch of ways people can get around it.
+For one, JavaScript can just be turned off, so the browser won't even run your validation code. 
+People can also use stuff like curl to send an HTTP request directly without ever loading your 
+HTML page. And even if they do load the page, browser dev tools let anyone edit the HTML 
+and JavaScript live to just delete the validation checks. On top of that, 
+someone who actually wants to cause problems could write their own client that ignores all your rules anyway.
+The thing is, the server is the part you control. It's basically the source of truth 
+since it's the only place you fully own, so it's the only place you can actually trust.
+So to sum it up, client-side validation is mostly there to make the experience nicer, 
+like giving instant feedback and cutting down on pointless requests. 
+Server-side validation is what actually keeps things secure and reliable.
+You should do both, but server-side is the one you can't skip. 
+It's kind of your safety net that catches whatever the client-side stuff misses, 
+whether that happens by accident or someone doing it on purpose.
 */
