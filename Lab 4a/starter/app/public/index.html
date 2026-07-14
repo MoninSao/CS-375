@@ -3,6 +3,60 @@
 <head>
     <meta charset="utf-8" />
     <title>Weather</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        div {
+            margin-bottom: 15px;
+        }
+        
+        input {
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        button {
+            padding: 8px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
 <div>
@@ -11,15 +65,52 @@
 </div>
 <button id="send">Send request</button>
 
+<table id="weather-table">
+    <thead>
+        <tr>
+            <th>Zip code</th>
+            <th>Temperature (°F)</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
 <script>
 let zipInput = document.getElementById("zip");
 let button = document.getElementById("send");
 button.addEventListener("click", () => {
-    fetch("/feels-like").then((response) => {
+
+    const zip = zipInput.value;
+
+    fetch(`/feels-like?zip=${zip}`).then((response) => {
         return response.json();
     })
     .then((body) => {
         console.log(body);
+        
+        // Get the table body
+        const tableBody = document.querySelector("#weather-table tbody");
+        
+        // Create a new row
+        const row = document.createElement("tr");
+        
+        // Create cells for zip code and temperature
+        const zipCell = document.createElement("td");
+        zipCell.textContent = body.zip;
+        
+        const tempCell = document.createElement("td");
+        tempCell.textContent = body["feels-like-fahrenheit"].toFixed(2);
+        
+        // Append cells to row
+        row.appendChild(zipCell);
+        row.appendChild(tempCell);
+        
+        // Append row to table body
+        tableBody.appendChild(row);
+        
+        // Clear the input field
+        zipInput.value = "";
     });
 });
 </script>
