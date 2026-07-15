@@ -1,0 +1,8 @@
+DROP DATABASE IF EXISTS demo;
+CREATE DATABASE demo;
+\c demo
+CREATE TABLE stuff (
+  id SERIAL PRIMARY KEY,
+  thing VARCHAR(30),
+  amount INT
+);
