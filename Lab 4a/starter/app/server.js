@@ -1,10 +1,14 @@
+console.log("Starting server...");
+
 let axios = require("axios");
 let express = require("express");
 let app = express();
 app.use(express.static("public"));
 
+console.log("Loading API key...");
 let apiFile = require("../key.json");
 let apiKey = apiFile["key"];
+console.log("API key loaded:", apiKey ? "✓" : "✗");
 
 let port = 3000;
 let hostname = "localhost";
@@ -31,5 +35,6 @@ app.get("/feels-like", (req, res) => {
 });
 
 app.listen(port, hostname, () => {
+  console.log("✓ Server started!");
   console.log(`http://${hostname}:${port}`);
 });

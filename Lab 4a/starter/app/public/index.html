@@ -22,45 +22,30 @@
             padding: 8px 15px;
             font-size: 14px;
             cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-        
-        button:hover {
-            background-color: #45a049;
+            background-color: white;
+            color: black;
+            border: 1px solid black;
         }
         
         table {
             margin-top: 20px;
             border-collapse: collapse;
-            width: 100%;
-            max-width: 500px;
+            width: auto;
         }
         
         table, th, td {
-            border: 1px solid #ddd;
+            border: 1px solid black;
         }
         
         th, td {
-            padding: 12px;
-            text-align: center;
-        }
-        
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+            padding: 8px 12px;
+            text-align: left;
         }
     </style>
 </head>
 <body>
 <div>
-    <label for="zip">Zip:</label>
+    <label for="zip">Zip code:</label>
     <input id="zip" type="text" />
 </div>
 <button id="send">Send request</button>
