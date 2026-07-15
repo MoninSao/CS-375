@@ -18,9 +18,10 @@ app.post("/api/:deviceid", (req, res) => {
         return res.status(400).send("Invalid Request");
     };
 
-    if ((!devices[id]) || (devices[id] = []) ) {
-        devices[id].push(usage);
+    if (!devices[id]) {
+        devices[id] = [];
     }
+    devices[id].push(usage);
 
     res.sendStatus(200);
 });
@@ -36,7 +37,7 @@ app.get("/api/:deviceid", (req, res) => {
 });
 
 // Requests to GET / should return an HTML page containing a table summarizing each device’s energy usage.
-app.get("/api", (req, res) => {
+app.get("/", (req, res) => {
     let rows = "";
 
     for (const id in devices) {
@@ -64,6 +65,7 @@ app.get("/api", (req, res) => {
 </body>
 </html>`;
 
+    res.setHeader("Content-Type", "text/html");
     res.send(html);
 });
 
