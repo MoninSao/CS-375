@@ -50,6 +50,8 @@
 </div>
 <button id="send">Send request</button>
 
+<div id="error-message" style="color: red; display: none; margin-bottom: 15px; font-weight: bold;"></div>
+
 <table id="weather-table">
     <thead>
         <tr>
@@ -64,38 +66,59 @@
 <script>
 let zipInput = document.getElementById("zip");
 let button = document.getElementById("send");
+let errorDiv = document.getElementById("error-message");
+
 button.addEventListener("click", () => {
+    // Clear error message when a new request is made
+    errorDiv.textContent = "";
+    errorDiv.style.display = "none";
 
     const zip = zipInput.value;
 
     fetch(`/feels-like?zip=${zip}`).then((response) => {
-        return response.json();
+        return response.json().then((body) => {
+            return { status: response.status, body: body };
+        });
     })
-    .then((body) => {
-        console.log(body);
+    .then(({status, body}) => {
+        console.log("Response status:", status, "Body:", body);
         
-        // Get the table body
-        const tableBody = document.querySelector("#weather-table tbody");
-        
-        // Create a new row
-        const row = document.createElement("tr");
-        
-        // Create cells for zip code and temperature
-        const zipCell = document.createElement("td");
-        zipCell.textContent = body.zip;
-        
-        const tempCell = document.createElement("td");
-        tempCell.textContent = body["feels-like-fahrenheit"].toFixed(2);
-        
-        // Append cells to row
-        row.appendChild(zipCell);
-        row.appendChild(tempCell);
-        
-        // Append row to table body
-        tableBody.appendChild(row);
-        
-        // Clear the input field
-        zipInput.value = "";
+        // Check if the response indicates an error
+        if (status === 400 || status === 500) {
+            // Display the error message
+            errorDiv.textContent = body.error || "An error occurred";
+            errorDiv.style.display = "block";
+        } else {
+            // Success case
+            // Get the table body
+            const tableBody = document.querySelector("#weather-table tbody");
+            
+            // Create a new row
+            const row = document.createElement("tr");
+            
+            // Create cells for zip code and temperature
+            const zipCell = document.createElement("td");
+            zipCell.textContent = body.zip;
+            
+            const tempCell = document.createElement("td");
+            tempCell.textContent = body["feels-like-fahrenheit"].toFixed(2);
+            
+            // Append cells to row
+            row.appendChild(zipCell);
+            row.appendChild(tempCell);
+            
+            // Append row to table body
+            tableBody.appendChild(row);
+            
+            // Clear the input field
+            zipInput.value = "";
+        }
+    })
+    .catch((error) => {
+        // Handle unexpected client-side errors
+        console.error("Fetch error:", error);
+        errorDiv.textContent = "Something went wrong";
+        errorDiv.style.display = "block";
     });
 });
 </script>

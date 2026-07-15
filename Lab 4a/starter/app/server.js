@@ -20,16 +20,29 @@ app.get("/feels-like", (req, res) => {
   try {
     const zip = req.query.zip;
     let url = `${baseUrl}?zip=${zip}&appid=${apiKey}`;
+    console.log(`Sending request to: ${url}`);
+    
     axios.get(url).then((response) => {
       console.log("Received response:", response.data);
       let ZIP = zip;
       let TMP = (response.data.main.feels_like - 273.15) * 9/5 + 32;
       res.json( {"zip": ZIP, "feels-like-fahrenheit": TMP } );
+    }).catch((error) => {
+      // Handle API errors from OpenWeather API
+      if (error.response && error.response.status) {
+        console.error("API error:", error.response.status, error.response.data);
+        // OpenWeather API returned an error (e.g., invalid zip code)
+        const errorMessage = error.response.data.message || "Invalid request";
+        res.status(400).json({error: errorMessage});
+      } else {
+        // Other network or client errors
+        console.error("Fetch error:", error.message);
+        res.status(500).json({error: "Something went wrong"});
+      }
     });
-    console.log(`Sending request to: ${url}`);
   } catch (error) {
-    console.error("Validation error:", error.message);
-    res.status(400).json({error: error.message });
+    console.error("Server error:", error.message);
+    res.status(500).json({error: "Something went wrong"});
   }
 
 });
