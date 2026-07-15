@@ -3,7 +3,7 @@ console.log("Starting server...");
 let axios = require("axios");
 let express = require("express");
 let app = express();
-app.use(express.static("public"));
+app.use(express.static("app/public"));
 
 console.log("Loading API key...");
 let apiFile = require("../key.json");
