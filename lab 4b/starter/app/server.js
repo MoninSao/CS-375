@@ -35,26 +35,12 @@ pool.connect().then(() => {
 let validSpecies = ["cat", "dog", "turtle", "antelope"];
 
 app.post("/animal", (req, res) => {
+  try {
   let body = req.body;
   let name = req.body.name;
   let age = req.body.age;
   let species = req.body.species;
   console.log(body);
-  pool 
-    .query(
-      `INSERT INTO animals(name, age, species)
-      VALUES($1, $2 $3)
-      RETURNING *`,
-      [name, age, species],
-    ).then((result) => {
-      console.log("Inserted:");
-      console.log(result.rows);
-    })
-    .catch((error) => {
-      console.log(error);
-      
-    });
-
 
   if (
     !body.hasOwnProperty("name") ||
@@ -63,7 +49,27 @@ app.post("/animal", (req, res) => {
   ) {
     return res.sendStatus(400);
   }
-  res.send();
+
+
+  pool 
+    .query(
+      `INSERT INTO animals(name, age, species)
+      VALUES($1, $2, $3)
+      RETURNING *`,
+      [name, age, species],
+    ).then((result) => {
+      console.log("Inserted:");
+      console.log(result.rows);
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500);
+    });
+
+  } catch (error) {
+    return res.status(500).send();
+  }
 });
 
 app.get("/animal", (req, res) => {
