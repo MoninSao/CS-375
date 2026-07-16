@@ -47,7 +47,7 @@ button.addEventListener("click", () => {
   }).then((data) => {
 
     table.innerHTML = "";
-    data.forEach(animal => {
+    data.rows.forEach(animal => {
       const row  = document.createElement("tr");
       row.innerHTML = `
       <td>${animal.name}</td>
