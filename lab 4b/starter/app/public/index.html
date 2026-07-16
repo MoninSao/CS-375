@@ -30,7 +30,24 @@
 
 <script>
 let nameInput = document.getElementById("name");
+let ageInput = document.getElementById("age");
+let speciesInput = document.getElementById("species");
 let button = document.getElementById("submit");
+
+
+button.addEventListener("click", () => {
+  const name = nameInput.value;
+  const age = ageInput.value;
+  const species = speciesInput.value;
+
+  fetch(`/animal?name=${name}&age=${age}&species=${species}`).then((response) => {
+    return response.json();
+  }).then((data) => {
+    console.log("Received body:", data);
+  }).catch(error => {
+    console.log(error);
+  });
+});
 </script>
 
 </body>

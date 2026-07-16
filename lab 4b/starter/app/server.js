@@ -15,28 +15,47 @@ pool.connect().then(() => {
 });
 
 // TODO comment this out after question 1
-pool
-  .query(
-    `INSERT INTO animals(name, age, species) 
-    VALUES($1, $2, $3)
-    RETURNING *`,
-    ["Applesauce", 9, "cat"],
-  )
-  .then((result) => {
-    // row was successfully inserted into table
-    console.log("Inserted:");
-    console.log(result.rows);
-  })
-  .catch((error) => {
-    // something went wrong when inserting the row
-    console.log(error);
-  });
+// pool
+//   .query(
+//     `INSERT INTO animals(name, age, species) 
+//     VALUES($1, $2, $3)
+//     RETURNING *`,
+//     ["Spot", 4, "dog"],
+//   )
+//   .then((result) => {
+//     // row was successfully inserted into table
+//     console.log("Inserted:");
+//     console.log(result.rows);
+//   })
+//   .catch((error) => {
+//     // something went wrong when inserting the row
+//     console.log(error);
+//   });
 
 let validSpecies = ["cat", "dog", "turtle", "antelope"];
 
 app.post("/animal", (req, res) => {
   let body = req.body;
+  let name = req.body.name;
+  let age = req.body.age;
+  let species = req.body.species;
   console.log(body);
+  pool 
+    .query(
+      `INSERT INTO animals(name, age, species)
+      VALUES($1, $2 $3)
+      RETURNING *`,
+      [name, age, species],
+    ).then((result) => {
+      console.log("Inserted:");
+      console.log(result.rows);
+    })
+    .catch((error) => {
+      console.log(error);
+      
+    });
+
+
   if (
     !body.hasOwnProperty("name") ||
     !body.hasOwnProperty("age") ||
