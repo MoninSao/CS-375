@@ -36,7 +36,21 @@
 
 <script>
 let table = document.getElementById("results");
+let speciesInput = document.getElementById("species");
 let button = document.getElementById("submit");
+
+button.addEventListener("click", () => {
+  const species = speciesInput.value;
+
+  fetch(`/animal?species=${species}`).then((response) => {
+    return response.json();
+  }).then((data) => {
+    console.log("Received body:", data);
+  }).catch(error => {
+    console.log(error);
+  })
+
+})
 </script>
 
 </body>

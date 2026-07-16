@@ -50,6 +50,12 @@ app.post("/animal", (req, res) => {
     return res.sendStatus(400);
   }
 
+  if (
+    (name === "") || (!Number.isInteger(age)) || (!validSpecies.includes(species))
+  ) {
+    return res.sendStatus(400);
+  }
+
 
   pool 
     .query(
@@ -73,9 +79,24 @@ app.post("/animal", (req, res) => {
 });
 
 app.get("/animal", (req, res) => {
-  // here's a sample select query
-  // pool.query(`SELECT * FROM animals WHERE name = $1`, ["Fluffy"]);
-  res.send();
+  const species = req.query.species
+
+  if (!validSpecies.includes(species)) {
+    res.sendStatus(400).send();
+  }
+
+  pool
+  .query(
+    `SELECT * FROM animals WHERE species = $1`,
+  [species]).then((result) => {
+    console.log("Queried:");
+    console.log(result.rows);
+    res.sendStatus(200);
+    res.json( { rows: result.rows } );
+  }).catch((error) => {
+    console.log(error);
+    return res.status(500).send();
+  });
 });
 
 app.listen(port, hostname, () => {
