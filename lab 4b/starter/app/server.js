@@ -82,7 +82,7 @@ app.get("/animal", (req, res) => {
   const species = req.query.species
 
   if (!validSpecies.includes(species)) {
-    res.sendStatus(400).send();
+    res.sendStatus(400);
   }
 
   pool
@@ -91,8 +91,7 @@ app.get("/animal", (req, res) => {
   [species]).then((result) => {
     console.log("Queried:");
     console.log(result.rows);
-    res.sendStatus(200);
-    res.json( { rows: result.rows } );
+    res.status(200).json( { rows: result.rows } );
   }).catch((error) => {
     console.log(error);
     return res.status(500).send();
