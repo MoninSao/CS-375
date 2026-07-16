@@ -45,7 +45,16 @@ button.addEventListener("click", () => {
   fetch(`/animal?species=${species}`).then((response) => {
     return response.json();
   }).then((data) => {
-    console.log("Received body:", data);
+
+    table.innerHTML = "";
+    data.forEach(animal => {
+      const row  = document.createElement("tr");
+      row.innerHTML = `
+      <td>${animal.name}</td>
+      <td>${animal.age}</td>
+      <td>${animal.species}</td>`;
+      table.appendChild(row);
+    })
   }).catch(error => {
     console.log(error);
   })
