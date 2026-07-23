@@ -4,6 +4,56 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Weather Forecast</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      label, input, button {
+        vertical-align: middle;
+        margin: 5px;
+      }
+
+      #error {
+        margin: 15px 5px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      table {
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th, td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f4f4f4;
+      }
+
+      .forecast-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .weather-icon {
+        filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+      }
+
+      .weather-description {
+        text-transform: capitalize;
+      }
+
+      .hot-temp {
+        text-shadow: 2px 2px 4px red;
+      }
+    </style>
   </head>
   <body>
     <h1>Weather Forecast</h1>
@@ -39,6 +89,27 @@
         return (k - 273.15) * (9 / 5) + 32;
       }
 
+      function formatDate(timestamp) {
+        let date = new Date(timestamp * 1000);
+        let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        let months = ["January", "February", "March", "April", "May", "June", 
+                      "July", "August", "September", "October", "November", "December"];
+        
+        let dayName = days[date.getDay()];
+        let day = date.getDate();
+        let monthName = months[date.getMonth()];
+        let year = date.getFullYear();
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours >= 12 ? "PM" : "AM";
+        
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        
+        return `${dayName}, ${day} ${monthName} ${year} @ ${hours}:${minutes} ${ampm}`;
+      }
+
       button.addEventListener("click", () => {
         let zip = document.getElementById("zip").value;
         errorEl.textContent = "";
@@ -56,21 +127,49 @@
               return;
             }
 
+            // Display city name
+            let cityName = result.data.city.name;
+            errorEl.textContent = `Five day forecast for: ${cityName}`;
+
             let list = result.data.list;
             for (let i = 0; i < list.length; i++) {
               let item = list[i];
               let row = document.createElement("tr");
 
+              // Date cell
               let dateCell = document.createElement("td");
-              dateCell.textContent = item.dt_txt;
+              dateCell.textContent = formatDate(item.dt);
               row.appendChild(dateCell);
 
+              // Forecast cell with icon
               let forecastCell = document.createElement("td");
-              forecastCell.textContent = item.weather[0].description;
+              let forecastDiv = document.createElement("div");
+              forecastDiv.className = "forecast-cell";
+              
+              let icon = document.createElement("img");
+              icon.src = `https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`;
+              icon.alt = item.weather[0].description;
+              icon.className = "weather-icon";
+              
+              let description = document.createElement("span");
+              description.className = "weather-description";
+              description.textContent = item.weather[0].description;
+              
+              forecastDiv.appendChild(icon);
+              forecastDiv.appendChild(description);
+              forecastCell.appendChild(forecastDiv);
               row.appendChild(forecastCell);
 
+              // Temperature cell
               let tempCell = document.createElement("td");
-              tempCell.textContent = kelvinToFahrenheit(item.main.temp).toFixed(2);
+              let tempF = kelvinToFahrenheit(item.main.temp);
+              tempCell.textContent = `${tempF.toFixed(1)}℉`;
+              
+              // Add hot temperature styling
+              if (tempF >= 90) {
+                tempCell.className = "hot-temp";
+              }
+              
               row.appendChild(tempCell);
 
               tbody.appendChild(row);
