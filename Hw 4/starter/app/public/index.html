@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather Forecast</title>
+  </head>
+  <body>
+    <h1>Weather Forecast</h1>
+    <label for="zip">Zip code:</label>
+    <input type="text" id="zip" />
+    <button id="submit">Get forecast</button>
+
+    <p id="error"></p>
+
+    <table id="forecast">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Forecast</th>
+          <th>Temperature</th>
+        </tr>
+      </thead>
+      <tbody id="forecast-body"></tbody>
+    </table>
+
+    <script>
+      let button = document.getElementById("submit");
+      let errorEl = document.getElementById("error");
+      let tbody = document.getElementById("forecast-body");
+
+      function clearTable() {
+        while (tbody.firstChild) {
+          tbody.removeChild(tbody.firstChild);
+        }
+      }
+
+      function kelvinToFahrenheit(k) {
+        return (k - 273.15) * (9 / 5) + 32;
+      }
+
+      button.addEventListener("click", () => {
+        let zip = document.getElementById("zip").value;
+        errorEl.textContent = "";
+        clearTable();
+
+        fetch(`/forecast?zip=${zip}`)
+          .then((response) => {
+            return response.json().then((data) => {
+              return { ok: response.ok, data: data };
+            });
+          })
+          .then((result) => {
+            if (!result.ok) {
+              errorEl.textContent = result.data.error;
+              return;
+            }
+
+            let list = result.data.list;
+            for (let i = 0; i < list.length; i++) {
+              let item = list[i];
+              let row = document.createElement("tr");
+
+              let dateCell = document.createElement("td");
+              dateCell.textContent = item.dt_txt;
+              row.appendChild(dateCell);
+
+              let forecastCell = document.createElement("td");
+              forecastCell.textContent = item.weather[0].description;
+              row.appendChild(forecastCell);
+
+              let tempCell = document.createElement("td");
+              tempCell.textContent = kelvinToFahrenheit(item.main.temp).toFixed(2);
+              row.appendChild(tempCell);
+
+              tbody.appendChild(row);
+            }
+          })
+          .catch((err) => {
+            errorEl.textContent = "Request failed";
+          });
+      });
+    </script>
+  </body>
+</html>
