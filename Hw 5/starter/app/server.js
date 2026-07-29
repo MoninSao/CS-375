@@ -1,4 +1,12 @@
+const express = require("express");
+const { Pool } = require("pg");
+const env = require("../env.json");
+
+const app = express();
+const pool = new Pool(env);
+
 app.use(express.json());
+app.use(express.static("public"));
 
 const GENRES = ["scifi", "romance", "adventure"];
 
@@ -34,4 +42,8 @@ app.get("/search", (req, res) => {
       .then((result) => res.status(200).json({ rows: result.rows }))
       .catch((err) => { console.log(err); res.status(200).json({ rows: [] }); });
   }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
